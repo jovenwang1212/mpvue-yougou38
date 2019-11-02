@@ -1,6 +1,7 @@
 {
   "pages": [
     "pages/home/main",
+    "pages/list/main",
     "pages/category/main",
     "pages/cart/main",
     "pages/me/main",

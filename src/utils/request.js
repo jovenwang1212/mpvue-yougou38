@@ -1,4 +1,5 @@
 const BASE_URL = 'https://www.uinav.com'
+// const BASE_URL = 'https://autumnfish.cn/wx/'
 
 export default function request (options) {
   return new Promise((resolve, reject) => {

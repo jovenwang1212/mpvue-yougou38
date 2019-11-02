@@ -15,7 +15,7 @@
           <li class="cate2" v-for="cate2 in categories[activeIndex].children" :key="cate2.cat_id">
             <p class="title">/<span>{{cate2.cat_name}}</span>/</p>
             <ul>
-              <li class="cate3" v-for="(cate3, index3) in cate2.children" :key="cate3.cat_id">
+              <li class="cate3" v-for="(cate3, index3) in cate2.children" :key="cate3.cat_id" @click="toList(cate3.cat_name)">
                 <img :src="cate3.cat_icon" alt="">
                 <p>{{cate3.cat_name}}</p>
               </li>
@@ -55,6 +55,10 @@ export default {
         this.categories = data
         this.isInit = true
       })
+    },
+    // 跳转到list页面
+    toList (name) {
+      wx.navigateTo({ url: '/pages/list/main?keyword=' + name })
     }
   }
 }
