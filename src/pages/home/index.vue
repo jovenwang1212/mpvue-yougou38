@@ -1,14 +1,7 @@
 <template>
 
 <div class="container">
-  <div class="search-hotspot">
-    <div>
-      <icon type="search"
-            size="18" color="#bbb">
-      </icon>搜索
-    </div>
-  </div>
-  
+  <SearchHotspot></SearchHotspot>
   <!-- 轮播图 -->
   <swiper indicator-dots autoplay circular indicator-active-color="#fff" indicator-color="rgba(255,255,255,0.3)">
       <block>
@@ -43,7 +36,12 @@
 </template>
 
 <script>
+import SearchHotspot from '@/components/SearchHotspot'
+
 export default {
+  components: {
+    SearchHotspot
+  },
   data () {
     return {
       // 轮播图数据
@@ -88,24 +86,6 @@ export default {
 </script>
 
 <style lang="less">
-.search-hotspot {
-  height: 100rpx;
-  padding: 20rpx 16rpx;
-  background-color: #eb4450;
-  box-sizing: border-box;
-  > div {
-    background-color: #fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 60rpx;
-    border-radius: 4rpx;
-    color:#bbb;
-    icon{
-      margin: 8rpx 16rpx 0 0;
-    }
-  }
-}
 swiper{
   height: 340rpx;
   img{

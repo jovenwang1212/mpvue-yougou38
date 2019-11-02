@@ -2,6 +2,15 @@ const BASE_URL = 'https://www.uinav.com'
 
 export default function request (options) {
   return new Promise((resolve, reject) => {
+    // 请求发出前loading,默认有loading
+
+    if (!options.noLoading) {
+      wx.showLoading({
+        title: ''
+      })
+      // wx.showNavigationBarLoading()
+    }
+
     wx.request({
       url: `${BASE_URL}${options.url}`,
       data: options.data || {},
@@ -16,6 +25,13 @@ export default function request (options) {
       },
       fail: (err) => {
         reject(err)
+      },
+      complete () {
+        // 请求完成后关闭loading
+        if (!options.noLoading) {
+          wx.hideLoading()
+          // wx.hideNavigationBarLoading()
+        }
       }
     })
   })
