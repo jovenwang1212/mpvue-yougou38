@@ -1,52 +1,87 @@
 <template>
-  <div class="content">
-    <div class="title">
-      <span class="iconfont icon-shop"></span>
-      <span>优购生活馆</span>
+  <div>
+    <div class="address-wrapper">
+      <div class="address">
+        <div class="receiver">
+          <p class="name">收货人：xx</p>
+          <p class="phone-num">xx</p>
+          <span class="iconfont icon-arrow-right"></span>
+        </div>
+        <p class="address-txt">收货地址：xx</p>
+      </div>
+      <!-- 选择地址 -->
+      <div class="choose-address" v-show="false">
+        <p>请选择地址</p>
+        <span class="iconfont icon-arrow-right"></span>
+      </div>
+      <div class="flower">
+        <img src="/static/images/cart_border@2x.png">
+      </div>
     </div>
+
     <!-- 商品列表 -->
     <ul class="goods-list">
       <li class="goods-item">
-        <span class="iconfont icon-checked"></span>
         <img src="https://api.zbztb.cn/full/2fb113b32f7a2b161f5ee4096c319afedc3fd5a1.jpg"
              alt="">
         <div class="right">
-          <p class="line-clamp2">xx</p>
+          <p class="line-clamp2">xxx</p>
           <div class="btm">
-            <span class="price">￥<span>100</span>.00</span>
+            <span class="price">￥<span>xxx</span>.00</span>
             <div class="goods-num">
-              <button >-</button>
-              <span>10</span>
-              <button>+</button>
+              <span>1000</span>
             </div>
           </div>
         </div>
       </li>
     </ul>
-    <div class="account">
-      <div class="select-all">
-        <span class="iconfont icon-checked"></span>
-        <span>全选</span>
-      </div>
 
-      <div class="price">
-        <p>合计:<span class="num">￥1000.00</span></p>
-        <p class="info">包含运费</p>
-      </div>
-      <div class="account-btn">结算(1000)</div>
+    <div class="bottom-fixed">
+      微信支付(1000.00)
     </div>
   </div>
 </template>
 
-
 <style lang="less">
-.title {
-  height: 88rpx;
+.address-wrapper {
+  background-color: #fff;
+}
+
+.address {
   display: flex;
-  align-items: center;
-  .iconfont {
+  flex-direction: column;
+  padding: 44rpx 30rpx 48rpx 20rpx;
+  .receiver {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 50rpx;
+    position: relative;
+    .phone-num {
+      margin-right: 40rpx;
+    }
+    .icon-arrow-right {
+      position: absolute;
+      top: 8rpx;
+      right: 0;
+      color: #999;
+    }
+  }
+}
+
+.choose-address {
+  display: flex;
+  padding: 44rpx 30rpx 48rpx 20rpx;
+  justify-content: space-between;
+  .icon-arrow-right {
     color: #999;
-    margin: 6rpx 12rpx 0 32rpx;
+  }
+}
+
+.flower {
+  img {
+    height: 16rpx;
+    width: 100%;
+    display: block;
   }
 }
 
@@ -57,13 +92,10 @@
   display: flex;
   box-sizing: border-box;
   align-items: center;
-  .iconfont {
-    color: #eb4450;
-    margin: 0 30rpx;
-  }
   img {
     width: 160rpx;
     height: 160rpx;
+    margin-left: 30rpx;
   }
   .right {
     flex: 1;
@@ -102,46 +134,22 @@
 .goods-list {
   position: absolute;
   bottom: 98rpx;
-  top: 88rpx;
+  top: 243rpx;
   width: 100%;
   overflow: auto;
   padding-bottom: 60rpx;
   background-color: #f4f4f4;
 }
 
-.account {
-  height: 98rpx;
-  border-bottom: 1rpx solid #ddd;
-  display: flex;
+.bottom-fixed {
   position: absolute;
+  height: 98rpx;
   left: 0;
   right: 0;
   bottom: 0;
-  align-items: center;
-  .iconfont {
-    color: #eb4450;
-    margin: 0 30rpx;
-  }
-  .account-btn {
-    width: 230rpx;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    background-color: #eb4450;
-  }
-  .select-all {
-    flex: 1;
-  }
-  .price {
-    margin-right: 20rpx;
-    .num {
-      color: #eb4450;
-    }
-    .info {
-      color: #999;
-    }
-  }
+  background-color: #1aad19;
+  color: #fff;
+  line-height: 98rpx;
+  text-align: center;
 }
 </style>

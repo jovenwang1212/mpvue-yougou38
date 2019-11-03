@@ -5,7 +5,13 @@
     "pages/category/main",
     "pages/cart/main",
     "pages/me/main",
-    "pages/mpvue_issue/main"
+    "pages/item/main",
+    "pages/search/main",
+    "pages/pay/main",
+    "pages/order/main",
+    "pages/order_detail/main",
+    "pages/order_result/main",
+    "pages/login/main"
   ],
   "window": {
     "backgroundTextStyle": "light",
