@@ -7,22 +7,23 @@
             circular
             indicator-color="#ccc"
             indicator-active-color="#fff">
-      <block v-for="(item, index) in 10"
+      <block v-for="(item, index) in goodsDetail.pics"
              :key="index">
-        <swiper-item>
+        <swiper-item @click="previewImg(index)">
           <image class="swiper-img"
-                 src="http://image1.suning.cn/uimg/b2c/newcatentries/0000000000-000000000740439998_1_200x200.jpg"></image>
+                 :src="item.pics_big"></image>
         </swiper-item>
       </block>
     </swiper>
     <!-- 商品信息 -->
     <div class="goods-info">
-      <p class="price">￥100</p>
+      <p class="price">￥{{goodsDetail.goods_price}}</p>
       <div class="name-favo">
-        <p class="name">紫米ZMI 小米QC3.0快充车充 5V2.4A双USB智能输出 一拖二手机平板通用汽车充电器 AP821 银色</p>
+        <p class="name">{{goodsDetail.goods_name}}</p>
         <div class=favo>
           <span class="iconfont icon-share"></span>
           <span>分享</span>
+          <button open-type="share">分享</button>
         </div>
       </div>
       <p class="express">快递: 免运费</p>
@@ -42,21 +43,21 @@
     <!-- 图文介绍 -->
     <div class="goods-detail">
       <div class="tabs">
-        <span class="active">图文介绍</span>
-        <span>规格参数</span>
+        <span :class="{active:activeIndex===index}" @click="activeIndex=index" v-for="(item, index) in menuArr" :key="index">{{item}}</span>
       </div>
       <div class="main">
-        <div>图文介绍</div>
-        <div v-show="false">商品参数</div>
+        <div v-show="!activeIndex" v-html="goodsDetail.goods_introduce"></div>
+        <div v-show="activeIndex">商品参数</div>
       </div>
     </div>
     <div class="fixed-bottom">
       <div class="icon-text">
         <span class="iconfont icon-kefu"></span>
         <span>联系客服</span>
+        <button open-type="contact">客服</button>
       </div>
-      <div class="icon-text">
-        <span class="iconfont"></span>
+      <div class="icon-text" @click="toCart">
+        <span class="iconfont icon-cart"></span>
         <span>购物车</span>
       </div>
       <div class="btn add-cart-btn">加入购物车</div>
@@ -66,6 +67,60 @@
 </template>
 
 <script>
+export default{
+  data () {
+    return {
+      goodsDetail: {},
+      // 默认选中菜单是图文介绍
+      activeIndex: 0,
+      menuArr: [
+        '图文介绍',
+        '规格参数'
+      ]
+    }
+  },
+  onLoad (options) {
+    console.log(options.goodsId)
+    this.getGoodsDetail(options.goodsId)
+  },
+  /*
+    title标题
+    imageUrl分享的图片
+  */
+  onShareAppMessage () {
+    return {
+      title: this.goodsDetail.goods_name,
+      imageUrl: this.goodsDetail.pics[0].pics_big
+    }
+  },
+  methods: {
+    toCart () {
+      wx.switchTab({ url: '/pages/cart/main' })
+    },
+    /*
+    预览图片
+    urls：需要预览的图片http链接列表
+    */
+    previewImg (index) {
+      let urls = []
+      this.goodsDetail.pics.forEach(v => {
+        urls.push(v.pics_big)
+      })
+      wx.previewImage({
+        current: urls[index], // 当前显示图片的http链接
+        urls
+      })
+    },
+    getGoodsDetail (goodsId) {
+      this.$request({
+        url: `/api/public/v1/goods/detail?goods_id=${goodsId}`
+      }).then(data => {
+        console.log(data)
+        this.goodsDetail = data
+      })
+    }
+  }
+}
 </script>
 <style lang="less">
 .wrapper {

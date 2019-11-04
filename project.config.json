@@ -19,7 +19,7 @@
 	},
 	"miniprogramRoot": "dist/wx/",
 	"compileType": "miniprogram",
-	"appid": "wxfb518caf2ac4bb78",
+	"appid": "wx4ec6df040af98951",
 	"projectname": "mpvue-yougou",
 	"simulatorType": "wechat",
 	"simulatorPluginLibVersion": {},
@@ -58,14 +58,14 @@
 					"id": 1,
 					"name": "搜索列表",
 					"pathName": "pages/list/main",
-					"query": "",
+					"query": "keyword=小米",
 					"scene": null
 				},
 				{
-					"id": -1,
+					"id": 2,
 					"name": "pages/item/main",
 					"pathName": "pages/item/main",
-					"query": "",
+					"query": "goodsId=57224",
 					"scene": null
 				},
 				{

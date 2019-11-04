@@ -24,7 +24,7 @@
     <!-- 商品列表 -->
     <ul class="goods-list" :style="{marginTop:isFixed?'220rpx':'0'}">
       <li v-for="(item, index) in goodsList"
-          :key="index">
+          :key="index" @click="toItem(item.goods_id)">
         <img :src="item.goods_big_logo"
              :alt="item.goods_name">
         <div class="right">
@@ -77,6 +77,10 @@ export default {
     this.isFixed = true
   },
   methods: {
+    // 跳转商品详情
+    toItem (goodsId) {
+      wx.navigateTo({ url: '/pages/item/main?goodsId=' + goodsId })
+    },
     inputHandler () {
       this.isRequest = true
       this.reload()
