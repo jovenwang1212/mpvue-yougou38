@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="header" :style="{position:isScroll?'static':'fixed'}">
+    <div class="header" :style="{position:isFixed?'fixed':'static'}">
       <!-- 头部 -->
       <div class="search">
         <icon type="search"
@@ -9,7 +9,7 @@
         <input type="text"
                v-model="keyword"
                confirm-type="search"
-               @confirm="reload">
+               @confirm="inputHandler">
       </div>
 
       <!-- filter -->
@@ -22,7 +22,7 @@
     </div>
 
     <!-- 商品列表 -->
-    <ul class="goods-list" :style="{marginTop:isScroll?'0':'220rpx'}">
+    <ul class="goods-list" :style="{marginTop:isFixed?'220rpx':'0'}">
       <li v-for="(item, index) in goodsList"
           :key="index">
         <img :src="item.goods_big_logo"
@@ -55,23 +55,18 @@ export default {
       // 搜索结果列表
       goodsList: [],
       isLastPage: false,
-      // 默认不是在滚动
-      isScroll: false
+      isFixed: false
     }
   },
   onLoad (options) {
     console.log(options.keyword)
     this.keyword = options.keyword
-    this.search()
-
-    // 初始化一些变量
-    this.pageNum = 1
-    // 是否请求中
     this.isRequest = false
+    this.reload()
   },
   onPullDownRefresh () {
+    this.isFixed = false
     this.reload()
-    this.isScroll = true
   },
   // 上拉加载下一页
   onReachBottom () {
@@ -79,10 +74,14 @@ export default {
     this.search()
   },
   onPageScroll () {
-    this.isScroll = false
-    console.log(this.isScroll)
+    this.isFixed = true
   },
   methods: {
+    inputHandler () {
+      this.isRequest = true
+      this.reload()
+    },
+
     reload () {
       this.isLastPage = false
       // ==============================

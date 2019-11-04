@@ -58,7 +58,7 @@
 					"id": 1,
 					"name": "搜索列表",
 					"pathName": "pages/list/main",
-					"query": "keyword=小米",
+					"query": "",
 					"scene": null
 				},
 				{

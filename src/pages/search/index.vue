@@ -23,6 +23,14 @@ import Search from '@/components/search.vue'
 export default {
   components: {
     Search
+  },
+  onLoad () {
+    this.$request({
+      url: '/api/public/v1/categories234243',
+      success: res => {},
+      fail: () => {},
+      complete: () => {}
+    })
   }
 }
 </script>

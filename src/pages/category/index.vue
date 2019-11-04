@@ -65,7 +65,7 @@ export default {
 </script>
 
 <style lang="less">
-  @red:#eb4450;
+  @import url('../../../static/css/index.less');
 
   .main{
     display: flex;
