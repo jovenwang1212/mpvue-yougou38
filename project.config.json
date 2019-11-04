@@ -65,7 +65,7 @@
 					"id": 2,
 					"name": "pages/item/main",
 					"pathName": "pages/item/main",
-					"query": "goodsId=57224",
+					"query": "",
 					"scene": null
 				},
 				{
@@ -115,6 +115,13 @@
 					"name": "pages/pay/main",
 					"pathName": "pages/pay/main",
 					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/test/main",
+					"pathName": "pages/test/main",
+					"query": "goodsId=57224",
 					"scene": null
 				}
 			]

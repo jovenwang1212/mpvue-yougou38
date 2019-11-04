@@ -5,7 +5,7 @@ export default {
 </script>
 
 <style lang="less">
-@import url(../static/css/iconfont.css);
+@import url(./css/iconfont.css);
 .text-line2 {
   overflow: hidden;
   text-overflow: ellipsis;

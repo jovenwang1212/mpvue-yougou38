@@ -5,9 +5,14 @@
     <div class="main">
 
       <div class="left">
-        <ul>
-          <li v-for="(cate1, index) in categories" :key="cate1.cat_id" @click="activeIndex=index" :class="{active:activeIndex===index}">{{cate1.cat_name}}</li>
-        </ul>
+         <scroll-view
+          scroll-y
+          scroll-with-animation
+          @scroll="scollHandler"
+          :scroll-into-view="'item'+activeIndex"
+          >
+          <div class="item" :id="'item'+index" v-for="(cate1, index) in categories" :key="cate1.cat_id" @click="activeIndex=index" :class="{active:activeIndex===index}">{{cate1.cat_name}}</div>
+        </scroll-view>
       </div>
       <div class="right" v-if="isInit">
         <img src="../../../static/images/titleImage.png" alt="">
@@ -36,8 +41,12 @@ export default {
       activeIndex: 0,
       // 分类数据
       categories: [],
-      isInit: false
+      isInit: false,
+      toView: 'item1'
     }
+  },
+  onPageScroll () {
+    console.log('scroll')
   },
   components: {
     SearchHotspot
@@ -46,6 +55,9 @@ export default {
     this.getCategories()
   },
   methods: {
+    scollHandler () {
+
+    },
     // 请求轮播图数据
     getCategories () {
       this.$request({
@@ -65,7 +77,7 @@ export default {
 </script>
 
 <style lang="less">
-  @import url('../../../static/css/index.less');
+  @import url('../../css/index.less');
 
   .main{
     display: flex;
@@ -80,7 +92,10 @@ export default {
   .left{
     width: 198rpx;
     overflow: auto;
-    li{
+    scroll-view{
+      height: 100%;
+    }
+    .item{
       height: 100rpx;
       background-color: #f4f4f4;
       border-bottom: 1rpx solid #eee;
