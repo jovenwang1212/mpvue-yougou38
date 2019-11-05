@@ -30,7 +30,7 @@ export default {
     // keyword不为空时，对父组件$emit confirm
     confirmHandler () {
       if (this.keyword) {
-        this.$emit('confirm', this.query)
+        this.$emit('confirm', this.keyword)
       }
     }
   },

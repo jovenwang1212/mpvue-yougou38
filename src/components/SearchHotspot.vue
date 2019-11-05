@@ -1,5 +1,5 @@
 <template>
-  <div class="search-hotspot">
+  <div class="search-hotspot" @click="toSearch">
     <div>
       <icon type="search"
             size="18"
@@ -11,6 +11,11 @@
 
 <script>
 export default {
+  methods: {
+    toSearch () {
+      wx.navigateTo({ url: '/pages/search/main' })
+    }
+  }
 
 }
 </script>
