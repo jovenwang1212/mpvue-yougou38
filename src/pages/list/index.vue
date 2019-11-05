@@ -2,7 +2,7 @@
   <div>
     <div class="header" :style="{position:isFixed?'fixed':'static'}">
       <!-- 头部 -->
-      <div class="search">
+      <!-- <div class="search">
         <icon type="search"
               size="18">
         </icon>
@@ -10,7 +10,10 @@
                v-model="keyword"
                confirm-type="search"
                @confirm="inputHandler">
-      </div>
+      </div> -->
+      <!-- 3.把组件名当标签使用 -->
+      <Search @confirm="inputHandler" :query="keyword"/>
+
 
       <!-- filter -->
       <ul class="nav">
@@ -40,8 +43,16 @@
 </template>
 
 <script>
+// 1.引入
+import Search from '@/components/search'
 const PAGE_SIZE = 6
 export default {
+  // 2.注册组件
+  components: {
+    // 组件名:组件
+    // Search: Search
+    Search
+  },
   data () {
     return {
       navArr: [
@@ -59,7 +70,7 @@ export default {
     }
   },
   onLoad (options) {
-    console.log(options.keyword)
+    // console.log(options.keyword)
     this.keyword = options.keyword
     this.isRequest = false
     this.reload()
@@ -81,8 +92,8 @@ export default {
     toItem (goodsId) {
       wx.navigateTo({ url: '/pages/item/main?goodsId=' + goodsId })
     },
-    inputHandler () {
-      this.isRequest = true
+    inputHandler (data) {
+      this.keyword = data
       this.reload()
     },
 
@@ -111,7 +122,7 @@ export default {
           pagenum: this.pageNum
         }
       }).then(data => {
-        console.log(data)
+        // console.log(data)
         this.goodsList = [...this.goodsList, ...data.goods]
         // 这里判断是不是最后一页
         if (this.goodsList.length === data.total) {
