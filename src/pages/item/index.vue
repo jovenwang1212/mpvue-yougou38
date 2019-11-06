@@ -112,7 +112,10 @@ export default{
         }
       }
       // 提示
-      this.$showToast('添加购物车成功')
+      wx.showToast({
+        title: '添加购物车成功'
+      })
+      // this.$showToast('添加购物车成功')
       // 存
       wx.setStorageSync('cart', cart)
     },

@@ -6,8 +6,12 @@
     </div>
     <!-- 商品列表 -->
     <ul class="goods-list">
-      <li class="goods-item" v-for="item in goodsList" :key="item.goods_id">
-        <span class="iconfont" :class="item.checked?'icon-check':'icon-uncheck'" @click="item.checked=!item.checked"></span>
+      <li class="goods-item"
+          v-for="item in goodsList"
+          :key="item.goods_id">
+        <span class="iconfont"
+              :class="item.checked?'icon-check':'icon-uncheck'"
+              @click="item.checked=!item.checked"></span>
         <img :src="item.goods_small_logo"
              alt="">
         <div class="right">
@@ -15,7 +19,8 @@
           <div class="btm">
             <span class="price">￥<span>{{item.goods_price}}</span>.00</span>
             <div class="goods-num">
-              <button @click="item.num>1&&item.num--" :disabled="item.num===1">-</button>
+              <button @click="item.num>1&&item.num--"
+                      :disabled="item.num===1">-</button>
               <span>{{item.num}}</span>
               <button @click='item.num++'>+</button>
             </div>
@@ -25,7 +30,9 @@
     </ul>
     <div class="account">
       <div class="select-all">
-        <span class="iconfont" :class="isAll?'icon-check':'icon-uncheck'" @click="isAll=!isAll"></span>
+        <span class="iconfont"
+              :class="isAll?'icon-check':'icon-uncheck'"
+              @click="isAll=!isAll"></span>
         <span>全选</span>
       </div>
 
@@ -33,7 +40,8 @@
         <p>合计:<span class="num">￥{{totalPice}}.00</span></p>
         <p class="info">包含运费</p>
       </div>
-      <div class="account-btn">结算({{totalNum}})</div>
+      <div class="account-btn"
+           @click="doAccount">结算({{totalNum}})</div>
     </div>
   </div>
 </template>
@@ -59,6 +67,18 @@ export default {
     wx.setStorageSync('cart', cart)
   },
   methods: {
+    doAccount () {
+      if (this.totalNum) {
+        let token = wx.getStorageSync('token')
+        let url = '/pages/pay/main'
+        if (!token) {
+          url = '/pages/login/main'
+        }
+        wx.navigateTo({ url: url })
+      } else {
+        this.$showToast('你还没有选择商品哦')
+      }
+    },
     // 获取购物车商品数据
     getGoodsList () {
       let cart = wx.getStorageSync('cart')
@@ -116,8 +136,8 @@ export default {
 
 
 <style lang="less">
-.iconfont{
-  font-size:46rpx;
+.iconfont {
+  font-size: 46rpx;
 }
 .title {
   height: 88rpx;

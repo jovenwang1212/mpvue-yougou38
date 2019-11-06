@@ -19,7 +19,7 @@
 	},
 	"miniprogramRoot": "dist/wx/",
 	"compileType": "miniprogram",
-	"appid": "wx4ec6df040af98951",
+	"appid": "wx38d8faffac4d34d2",
 	"projectname": "mpvue-yougou",
 	"simulatorType": "wechat",
 	"simulatorPluginLibVersion": {},
@@ -111,8 +111,8 @@
 					"scene": null
 				},
 				{
-					"id": -1,
-					"name": "pages/pay/main",
+					"id": 9,
+					"name": "支付页面",
 					"pathName": "pages/pay/main",
 					"query": "",
 					"scene": null
@@ -122,6 +122,27 @@
 					"name": "pages/test/main",
 					"pathName": "pages/test/main",
 					"query": "goodsId=57224",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "登陆",
+					"pathName": "pages/login/main",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/order_result/main",
+					"pathName": "pages/order_result/main",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "订单详情",
+					"pathName": "pages/order_detail/main",
+					"query": "orderNumber=HMDD20191106000000000371",
 					"scene": null
 				}
 			]

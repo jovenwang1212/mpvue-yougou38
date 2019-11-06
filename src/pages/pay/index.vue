@@ -1,16 +1,19 @@
 <template>
   <div>
     <div class="address-wrapper">
-      <div class="address">
+      <div class="address"
+           v-if="address.userName">
         <div class="receiver">
-          <p class="name">收货人：xx</p>
-          <p class="phone-num">xx</p>
+          <p class="name">收货人：{{address.userName}}</p>
+          <p class="phone-num">{{address.telNumber}}</p>
           <span class="iconfont icon-arrow-right"></span>
         </div>
-        <p class="address-txt">收货地址：xx</p>
+        <p class="address-txt">收货地址：{{fullAddress}}</p>
       </div>
       <!-- 选择地址 -->
-      <div class="choose-address" v-show="false">
+      <div class="choose-address"
+           v-else
+           @click="getAddr">
         <p>请选择地址</p>
         <span class="iconfont icon-arrow-right"></span>
       </div>
@@ -21,26 +24,158 @@
 
     <!-- 商品列表 -->
     <ul class="goods-list">
-      <li class="goods-item">
-        <img src="https://api.zbztb.cn/full/2fb113b32f7a2b161f5ee4096c319afedc3fd5a1.jpg"
-             alt="">
-        <div class="right">
-          <p class="line-clamp2">xxx</p>
-          <div class="btm">
-            <span class="price">￥<span>xxx</span>.00</span>
-            <div class="goods-num">
-              <span>1000</span>
+      <block v-for="item in goodsList"
+             :key="item.goods_id">
+        <li class="goods-item"
+            v-if="item.checked">
+          <img :src="item.goods_small_logo"
+               alt="">
+          <div class="right">
+            <p class="text-line2">{{item.goods_name}}</p>
+            <div class="btm">
+              <span class="price">￥<span>{{item.goods_price}}</span>.00</span>
+              <div class="goods-num">
+                <span>{{item.num}}</span>
+              </div>
             </div>
           </div>
-        </div>
-      </li>
+        </li>
+      </block>
     </ul>
 
-    <div class="bottom-fixed">
-      微信支付(1000.00)
+    <div class="bottom-fixed"
+         @click="pay">
+      微信支付({{totalPrice}}.00)
     </div>
   </div>
 </template>
+<script>
+export default {
+  data () {
+    return {
+      address: wx.getStorageSync('address') || {},
+      goodsList: []
+    }
+  },
+  onLoad () {
+    this.getGoodsList()
+  },
+  methods: {
+    // 获取购物车商品数据
+    getGoodsList () {
+      let cart = wx.getStorageSync('cart')
+      let ids = Object.keys(cart).join(',')
+      this.$request({
+        url: '/api/public/v1/goods/goodslist?goods_ids=' + ids
+      }).then(data => {
+        console.log(data)
+        let goodsList = data
+        goodsList.forEach(v => {
+          v.num = cart[v.goods_id].num
+          v.checked = cart[v.goods_id].checked
+        })
+        this.goodsList = goodsList
+      })
+    },
+    getAddr () {
+      wx.chooseAddress({
+        success: (res) => {
+          console.log(res)
+          this.address = res
+          wx.setStorageSync('address', res)
+        }
+      })
+    },
+    pay () {
+      // 如果没有商品的话
+      if (!this.totalPrice) {
+        this.$showToast('请选择商品')
+        return
+      }
+
+      if (!this.address.userName) {
+        this.$showToast('请选择地址')
+        return
+      }
+      this.createOrder()
+    },
+    createOrder () {
+      let token = wx.getStorageSync('token')
+      this.$request({
+        url: '/api/public/v1/my/orders/create',
+        method: 'POST',
+        header: {
+          'Authorization': token
+        },
+        data: {
+          order_price: this.totalPrice,
+          consignee_addr: this.fullAddress,
+          goods: this.getCheckedGoods()
+        }
+      }).then(data => {
+        console.log(data)
+        this.doPay(token, data.order_number)
+      }).finally(() => {
+        // 不论成功或者失败，都从购物车里面清掉checked商品
+        let cart = wx.getStorageSync('cart')
+        for (let key in cart) {
+          if (cart[key].checked) {
+            delete cart[key]
+          }
+        }
+        wx.setStorageSync('cart', cart)
+      })
+    },
+    doPay (token, orderNumber) {
+      this.$request({
+        url: '/api/public/v1/my/orders/req_unifiedorder',
+        method: 'POST',
+        header: {
+          'Authorization': token
+        },
+        data: {
+          order_number: orderNumber
+        }
+      }).then(data => {
+        console.log(data)
+        wx.requestPayment({
+          ...data.pay,
+          success: res => {
+            wx.navigateTo({ url: '/pages/order_result/main' })
+          },
+          fail: () => {
+            wx.navigateTo({ url: `/pages/order_result/main?orderNumber=${orderNumber}` })
+          },
+          complete: () => {}
+        })
+      })
+    },
+    getCheckedGoods () {
+      let list = []
+      this.goodsList.forEach(v => {
+        if (v.checked) {
+          list.push({
+            goods_id: v.goods_id,
+            goods_number: v.num,
+            goods_price: v.goods_price
+          })
+        }
+      })
+      return list
+    }
+  },
+  computed: {
+    fullAddress () {
+      return this.address.provinceName + this.address.cityName + this.address.countyName + this.address.detailInfo
+    },
+    totalPrice () {
+      return this.goodsList.reduce((sum, v) => {
+        return sum + (v.checked ? v.goods_price * v.num : 0)
+      }, 0)
+    }
+  }
+}
+</script>
 
 <style lang="less">
 .address-wrapper {
