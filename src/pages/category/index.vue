@@ -51,7 +51,7 @@ export default {
   components: {
     SearchHotspot
   },
-  onLoad () {
+  created () {
     this.getCategories()
   },
   methods: {
@@ -63,7 +63,7 @@ export default {
       this.$request({
         url: '/api/public/v1/categories'
       }).then(data => {
-        console.log(data)
+        // console.log(data)
         this.categories = data
         this.isInit = true
       })

@@ -51,7 +51,7 @@ export default {
     }
   },
 
-  onLoad () {
+  created () {
     this.getSwiperdata()
     this.getCatitems()
     this.getFloordata()

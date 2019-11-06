@@ -6,18 +6,18 @@
     </div>
     <!-- 商品列表 -->
     <ul class="goods-list">
-      <li class="goods-item">
-        <span class="iconfont icon-checked"></span>
-        <img src="https://api.zbztb.cn/full/2fb113b32f7a2b161f5ee4096c319afedc3fd5a1.jpg"
+      <li class="goods-item" v-for="item in goodsList" :key="item.goods_id">
+        <span class="iconfont" :class="item.checked?'icon-check':'icon-uncheck'" @click="item.checked=!item.checked"></span>
+        <img :src="item.goods_small_logo"
              alt="">
         <div class="right">
-          <p class="line-clamp2">xx</p>
+          <p class="text-line2">{{item.goods_name}}</p>
           <div class="btm">
-            <span class="price">￥<span>100</span>.00</span>
+            <span class="price">￥<span>{{item.goods_price}}</span>.00</span>
             <div class="goods-num">
-              <button >-</button>
-              <span>10</span>
-              <button>+</button>
+              <button @click="item.num>1&&item.num--" :disabled="item.num===1">-</button>
+              <span>{{item.num}}</span>
+              <button @click='item.num++'>+</button>
             </div>
           </div>
         </div>
@@ -25,21 +25,100 @@
     </ul>
     <div class="account">
       <div class="select-all">
-        <span class="iconfont icon-checked"></span>
+        <span class="iconfont" :class="isAll?'icon-check':'icon-uncheck'" @click="isAll=!isAll"></span>
         <span>全选</span>
       </div>
 
       <div class="price">
-        <p>合计:<span class="num">￥1000.00</span></p>
+        <p>合计:<span class="num">￥{{totalPice}}.00</span></p>
         <p class="info">包含运费</p>
       </div>
-      <div class="account-btn">结算(1000)</div>
+      <div class="account-btn">结算({{totalNum}})</div>
     </div>
   </div>
 </template>
 
+<script>
+export default {
+  data () {
+    return {
+      goodsList: []
+    }
+  },
+  onShow () {
+    this.getGoodsList()
+  },
+  onHide () {
+    let cart = {}
+    this.goodsList.forEach(v => {
+      cart[v.goods_id] = {
+        num: v.num,
+        checked: v.checked
+      }
+    })
+    wx.setStorageSync('cart', cart)
+  },
+  methods: {
+    // 获取购物车商品数据
+    getGoodsList () {
+      let cart = wx.getStorageSync('cart')
+      let ids = Object.keys(cart).join(',')
+      this.$request({
+        url: '/api/public/v1/goods/goodslist?goods_ids=' + ids
+      }).then(data => {
+        console.log(data)
+        let goodsList = data
+        goodsList.forEach(v => {
+          v.num = cart[v.goods_id].num
+          v.checked = cart[v.goods_id].checked
+        })
+        this.goodsList = goodsList
+      })
+    }
+  },
+  computed: {
+    isAll: {
+      get () {
+        // 所有商品都选中;
+        // 只有一个商品不选中，就为false
+        return this.goodsList.every(v => {
+          return v.checked
+        })
+      },
+      set (newValue) {
+        // console.log(newValue)
+        this.goodsList.forEach(v => {
+          v.checked = newValue
+        })
+      }
+    },
+    totalPice () {
+      return this.goodsList.reduce((sum, v) => {
+        return sum + (v.checked ? v.goods_price * v.num : 0)
+      }, 0)
+    },
+    // 商品总数量
+    totalNum () {
+      // let sum = 0
+      // this.goodsList.forEach(v => {
+      //   if (v.checked) {
+      //     sum += v.num
+      //   }
+      // })
+      // return sum
+      return this.goodsList.reduce((sum, v) => {
+        return sum + (v.checked ? v.num : 0)
+      }, 0)
+    }
+  }
+}
+</script>
+
 
 <style lang="less">
+.iconfont{
+  font-size:46rpx;
+}
 .title {
   height: 88rpx;
   display: flex;
