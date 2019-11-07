@@ -1,16 +1,16 @@
 <template>
   <div>
     <div class="address-wrapper">
-      <div class="address">
+      <div class="address" v-if="addr.userName">
         <div class="receiver">
-          <p class="name">收货人：xx</p>
-          <p class="phone-num">xx</p>
+          <p class="name">收货人：{{addr.userName}}</p>
+          <p class="phone-num">{{addr.telNumber}}</p>
           <span class="iconfont icon-arrow-right"></span>
         </div>
-        <p class="address-txt">收货地址：xx</p>
+        <p class="address-txt">收货地址：{{fullAddr}}</p>
       </div>
       <!-- 选择地址 -->
-      <div class="choose-address" v-show="false">
+      <div class="choose-address" v-else @click="getAddr">
         <p>请选择地址</p>
         <span class="iconfont icon-arrow-right"></span>
       </div>
@@ -21,26 +21,131 @@
 
     <!-- 商品列表 -->
     <ul class="goods-list">
-      <li class="goods-item">
-        <img src="https://api.zbztb.cn/full/2fb113b32f7a2b161f5ee4096c319afedc3fd5a1.jpg"
+      <li class="goods-item" v-for="item in goodsList" :key="item.goods_id">
+        <img :src="item.goods_small_logo"
              alt="">
         <div class="right">
-          <p class="line-clamp2">xxx</p>
+          <p class="text-line2">{{item.goods_name}}</p>
           <div class="btm">
-            <span class="price">￥<span>xxx</span>.00</span>
+            <span class="price">￥<span>{{item.goods_price}}</span>.00</span>
             <div class="goods-num">
-              <span>1000</span>
+              <span>{{item.num}}</span>
             </div>
           </div>
         </div>
       </li>
     </ul>
 
-    <div class="bottom-fixed">
-      微信支付(1000.00)
+    <div class="bottom-fixed" @click="pay">
+      微信支付({{totalPrice}}.00)
     </div>
   </div>
 </template>
+
+<script>
+export default {
+  data () {
+    return {
+      addr: wx.getStorageSync('addr') || {},
+      goodsList: []
+    }
+  },
+  computed: {
+    fullAddr () {
+      return this.addr.provinceName + this.addr.cityName + this.addr.countyName + this.addr.detailInfo
+    },
+    totalPrice () {
+      // 每个商品的数量*价格
+      return this.goodsList.reduce((sum, item) => {
+        return sum + item.num * item.goods_price
+      }, 0)
+    }
+  },
+  onLoad () {
+    this.getGoodsList()
+  },
+  methods: {
+    pay () {
+      let token = wx.getStorageSync('token')
+      if (!token) {
+        wx.navigateTo({ url: '/pages/login/main' })
+        return
+      }
+
+      this.createOrder(token)
+    },
+    createOrder (token) {
+      this.$request({
+        url: '/api/public/v1/my/orders/create',
+        header: {
+          'Authorization': token
+        },
+        method: 'POST',
+        data: {
+          order_price: this.totalPrice,
+          consignee_addr: this.fullAddr,
+          goods: this.filterGoodsList()
+
+        }
+      }).then(data => {
+        console.log(data)
+      })
+    },
+    filterGoodsList () {
+      let _goods = []
+
+      this.goodsList.forEach(v => {
+        _goods.push({
+          goods_id: v.goods_id,
+          goods_number: v.num,
+          goods_price: v.goods_price
+        })
+      })
+
+      return _goods
+    },
+    getGoodsList () {
+      let cart = wx.getStorageSync('cart')
+
+      let checkedCart = this.filterCart(cart)
+
+      let ids = Object.keys(checkedCart).join(',')
+
+      this.$request({
+        url: '/api/public/v1/goods/goodslist?goods_ids=' + ids
+      }).then(data => {
+        // console.log(data)
+
+        let goodsList = data
+        // cart和goodslist数据合并
+        goodsList.forEach(v => {
+          let obj = cart[v.goods_id]
+          v.num = obj.num
+        })
+        this.goodsList = goodsList
+      })
+    },
+    // 购物车的数据，如果没有checked，就去掉
+    filterCart (cart) {
+      for (let key in cart) {
+        if (!cart[key].checked) {
+          delete cart[key]
+        }
+      }
+      return cart
+    },
+    getAddr () {
+      wx.chooseAddress({
+        success: (res) => {
+          console.log(res)
+          this.addr = res
+          wx.setStorageSync('addr', this.addr)
+        }
+      })
+    }
+  }
+}
+</script>
 
 <style lang="less">
 .address-wrapper {

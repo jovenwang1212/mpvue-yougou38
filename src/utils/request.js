@@ -17,6 +17,7 @@ export default function request (options) {
       url: `${BASE_URL}${options.url}`,
       data: options.data || {},
       method: options.method,
+      header: options.header,
       success: res => {
         const {meta, message} = res.data
         if (meta.status === 200) {

@@ -33,7 +33,7 @@
         <p>合计:<span class="num">￥{{totalPrice}}.00</span></p>
         <p class="info">包含运费</p>
       </div>
-      <div class="account-btn">结算({{totalNum}})</div>
+      <div class="account-btn" @click="doAccount">结算({{totalNum}})</div>
     </div>
   </div>
 </template>
@@ -93,8 +93,27 @@ export default {
     }
   },
   methods: {
+    doAccount () {
+      // 如果没有token，跳转登陆
+      let token = wx.getStorageSync('token')
+      if (!token) {
+        wx.navigateTo({ url: '/pages/login/main' })
+        return
+      }
+      // 如果商品数量为0，提示
+      if (!this.totalNum) {
+        this.$showToast('请添加商品')
+        return
+      }
+      // 跳转pay
+      wx.navigateTo({ url: '/pages/pay/main' })
+    },
     getGoodsList (cart) {
       let ids = Object.keys(cart).join(',')
+      if (!ids.trim()) {
+        this.$showToast('购物车空的！')
+        return
+      }
       this.$request({
         url: '/api/public/v1/goods/goodslist?goods_ids=' + ids
       }).then(data => {
