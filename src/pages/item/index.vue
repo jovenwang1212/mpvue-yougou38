@@ -117,6 +117,7 @@ export default{
       wx.showToast({
         title: '添加购物车成功'
       })
+
       // 存回去
       wx.setStorageSync('cart', cart)
     },

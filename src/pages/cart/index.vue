@@ -48,6 +48,10 @@ export default {
   onShow () {
     let cart = wx.getStorageSync('cart') || {}
     this.getGoodsList(cart)
+    wx.setTabBarBadge({
+      index: 2, // tabBar的哪一项，从左边算起,
+      text: `${Object.keys(cart).length}`
+    })
   },
   onHide () {
     let cart = {}
