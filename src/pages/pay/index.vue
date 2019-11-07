@@ -1,7 +1,8 @@
 <template>
   <div>
     <div class="address-wrapper">
-      <div class="address" v-if="addr.userName">
+      <div class="address"
+           v-if="addr.userName">
         <div class="receiver">
           <p class="name">收货人：{{addr.userName}}</p>
           <p class="phone-num">{{addr.telNumber}}</p>
@@ -10,7 +11,9 @@
         <p class="address-txt">收货地址：{{fullAddr}}</p>
       </div>
       <!-- 选择地址 -->
-      <div class="choose-address" v-else @click="getAddr">
+      <div class="choose-address"
+           v-else
+           @click="getAddr">
         <p>请选择地址</p>
         <span class="iconfont icon-arrow-right"></span>
       </div>
@@ -21,7 +24,9 @@
 
     <!-- 商品列表 -->
     <ul class="goods-list">
-      <li class="goods-item" v-for="item in goodsList" :key="item.goods_id">
+      <li class="goods-item"
+          v-for="item in goodsList"
+          :key="item.goods_id">
         <img :src="item.goods_small_logo"
              alt="">
         <div class="right">
@@ -36,7 +41,8 @@
       </li>
     </ul>
 
-    <div class="bottom-fixed" @click="pay">
+    <div class="bottom-fixed"
+         @click="pay">
       微信支付({{totalPrice}}.00)
     </div>
   </div>
@@ -61,7 +67,8 @@ export default {
       }, 0)
     }
   },
-  onLoad () {
+  onLoad (options) {
+    this.goodsId = options.goodsId
     this.getGoodsList()
   },
   methods: {
@@ -94,6 +101,9 @@ export default {
       }).then(data => {
         this.doPay(token, data.order_number)
       }).finally(() => {
+        if (this.goodsId) {
+          return
+        }
         // 不管创建订单成功还是失败，都应该从购物车里面去掉
         let cart = wx.getStorageSync('cart')
         for (let key in cart) {
@@ -124,7 +134,7 @@ export default {
           fail: () => {
             this.$showToast('失败')
           },
-          complete: () => {}
+          complete: () => { }
         })
       })
     },
@@ -142,11 +152,17 @@ export default {
       return _goods
     },
     getGoodsList () {
-      let cart = wx.getStorageSync('cart')
+      let buyList = {}
+      if (this.goodsId) {
+        buyList[this.goodsId] = {
+          num: 1
+        }
+      } else {
+        let cart = wx.getStorageSync('cart')
+        buyList = this.filterCart(cart)
+      }
 
-      let checkedCart = this.filterCart(cart)
-
-      let ids = Object.keys(checkedCart).join(',')
+      let ids = Object.keys(buyList).join(',')
 
       this.$request({
         url: '/api/public/v1/goods/goodslist?goods_ids=' + ids
@@ -156,7 +172,7 @@ export default {
         let goodsList = data
         // cart和goodslist数据合并
         goodsList.forEach(v => {
-          let obj = cart[v.goods_id]
+          let obj = buyList[v.goods_id]
           v.num = obj.num
         })
         this.goodsList = goodsList
@@ -172,13 +188,39 @@ export default {
       return cart
     },
     getAddr () {
-      wx.chooseAddress({
-        success: (res) => {
-          console.log(res)
-          this.addr = res
-          wx.setStorageSync('addr', this.addr)
+      wx.getSetting({ success: res => {
+        console.log(res.authSetting)
+        if (res.authSetting['scope.address'] === false) {
+          wx.showModal({
+            title: '提示', // 提示的标题,
+            content: '请允许通讯地址', // 提示的内容,
+            showCancel: true, // 是否显示取消按钮,
+            cancelText: '取消', // 取消按钮的文字，默认为取消，最多 4 个字符,
+            cancelColor: '#000000', // 取消按钮的文字颜色,
+            confirmText: '确定', // 确定按钮的文字，默认为取消，最多 4 个字符,
+            confirmColor: '#3CC51F', // 确定按钮的文字颜色,
+            success: res => {
+              if (res.confirm) {
+                wx.openSetting({ success: res => {} })
+              }
+            }
+          })
+        } else {
+          wx.authorize({
+            scope:
+              'scope.address',
+            success: res => {
+              wx.chooseAddress({
+                success: (res) => {
+                  console.log(res)
+                  this.addr = res
+                  wx.setStorageSync('addr', this.addr)
+                }
+              })
+            }
+          })
         }
-      })
+      } })
     }
   }
 }
