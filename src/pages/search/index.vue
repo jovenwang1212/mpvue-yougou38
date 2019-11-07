@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <search @confirm="toList"/>
+    <search @confirm="toList" :query="keyword"/>
     <div class="history-search">
       <div class="title">
         <span class="title">历史搜索</span>
@@ -23,12 +23,14 @@ export default {
   },
   data () {
     return {
-      keywordList: wx.getStorageSync('keywordList') || []
+      keywordList: wx.getStorageSync('keywordList') || [],
+      keyword: ''
     }
   },
   // 前一个页面back的时候，取storage数据
   onShow () {
     this.keywordList = wx.getStorageSync('keywordList') || []
+    this.keyword = ''
   },
   methods: {
     clear () {
@@ -50,6 +52,8 @@ export default {
       })
     },
     toList (data) {
+      // keyword的改动要设置，不然在search组件里面无法watch到query的改动
+      this.keyword = data
       // data需要显示在历史搜索的第一个
       let _keywordList = [...this.keywordList]
       // 如果包含的话，先删除。直接插在前面
