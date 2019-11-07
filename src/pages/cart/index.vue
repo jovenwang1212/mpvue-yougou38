@@ -25,15 +25,15 @@
     </ul>
     <div class="account">
       <div class="select-all">
-        <span class="iconfont" :class="isAll?'icon-check':'icon-uncheck'"></span>
+        <span class="iconfont" :class="isAll?'icon-check':'icon-uncheck'" @click="isAll=!isAll"></span>
         <span>全选</span>
       </div>
 
       <div class="price">
-        <p>合计:<span class="num">￥1000.00</span></p>
+        <p>合计:<span class="num">￥{{totalPrice}}.00</span></p>
         <p class="info">包含运费</p>
       </div>
-      <div class="account-btn">结算(1000)</div>
+      <div class="account-btn">结算({{totalNum}})</div>
     </div>
   </div>
 </template>
@@ -49,12 +49,47 @@ export default {
     let cart = wx.getStorageSync('cart') || {}
     this.getGoodsList(cart)
   },
+  onHide () {
+    let cart = {}
+    this.goodsList.forEach(v => {
+      cart[v.goods_id] = {
+        num: v.num,
+        checked: v.checked
+      }
+    })
+    // 存
+    wx.setStorageSync('cart', cart)
+  },
   computed: {
     // 是否所有的商品都勾选
-    isAll () {
-      return this.goodsList.every(v => {
-        return v.checked
-      })
+    isAll: {
+      get () {
+        return this.goodsList.every(v => {
+          return v.checked
+        })
+      },
+      set (newValue) {
+        // console.log(newValue)
+        this.goodsList.forEach(v => {
+          v.checked = newValue
+        })
+      }
+    },
+    totalNum () {
+      // let sum = 0
+      // this.goodsList.forEach(v => {
+      //   sum += v.num
+      // })
+      // return sum
+      return this.goodsList.reduce((sum, item) => {
+        return sum + (item.checked ? item.num : 0)
+      }, 0)
+    },
+    totalPrice () {
+      // 每个商品的数量*价格
+      return this.goodsList.reduce((sum, item) => {
+        return sum + (item.checked ? (item.num * item.goods_price) : 0)
+      }, 0)
     }
   },
   methods: {
