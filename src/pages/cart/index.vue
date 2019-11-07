@@ -6,18 +6,18 @@
     </div>
     <!-- 商品列表 -->
     <ul class="goods-list">
-      <li class="goods-item">
-        <span class="iconfont icon-checked"></span>
-        <img src="https://api.zbztb.cn/full/2fb113b32f7a2b161f5ee4096c319afedc3fd5a1.jpg"
+      <li class="goods-item" v-for="item in goodsList" :key="item.goods_id">
+        <span class="iconfont" :class="item.checked?'icon-check':'icon-uncheck'" @click="item.checked=!item.checked"></span>
+        <img :src="item.goods_small_logo"
              alt="">
         <div class="right">
-          <p class="line-clamp2">xx</p>
+          <p class="text-line2">{{item.goods_name}}</p>
           <div class="btm">
-            <span class="price">￥<span>100</span>.00</span>
+            <span class="price">￥<span>{{item.goods_price}}</span>.00</span>
             <div class="goods-num">
-              <button >-</button>
-              <span>10</span>
-              <button>+</button>
+              <button @click="item.num--" :disabled="item.num<2">-</button>
+              <span>{{item.num}}</span>
+              <button @click="item.num++">+</button>
             </div>
           </div>
         </div>
@@ -25,7 +25,7 @@
     </ul>
     <div class="account">
       <div class="select-all">
-        <span class="iconfont icon-checked"></span>
+        <span class="iconfont" :class="isAll?'icon-check':'icon-uncheck'"></span>
         <span>全选</span>
       </div>
 
@@ -38,8 +38,52 @@
   </div>
 </template>
 
+<script>
+export default {
+  data () {
+    return {
+      goodsList: []
+    }
+  },
+  onShow () {
+    let cart = wx.getStorageSync('cart') || {}
+    this.getGoodsList(cart)
+  },
+  computed: {
+    // 是否所有的商品都勾选
+    isAll () {
+      return this.goodsList.every(v => {
+        return v.checked
+      })
+    }
+  },
+  methods: {
+    getGoodsList (cart) {
+      let ids = Object.keys(cart).join(',')
+      this.$request({
+        url: '/api/public/v1/goods/goodslist?goods_ids=' + ids
+      }).then(data => {
+        // console.log(data)
+
+        let goodsList = data
+        // cart和goodslist数据合并
+        goodsList.forEach(v => {
+          let obj = cart[v.goods_id]
+          v.num = obj.num
+          v.checked = obj.checked
+        })
+        this.goodsList = goodsList
+      })
+    }
+  }
+}
+</script>
+
 
 <style lang="less">
+.iconfont{
+  font-size: 50rpx;
+}
 .title {
   height: 88rpx;
   display: flex;
