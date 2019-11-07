@@ -70,7 +70,7 @@
 				},
 				{
 					"id": 3,
-					"name": "pages/me/main",
+					"name": "我的",
 					"pathName": "pages/me/main",
 					"query": "",
 					"scene": null
@@ -83,10 +83,10 @@
 					"scene": null
 				},
 				{
-					"id": -1,
+					"id": 5,
 					"name": "pages/order_detail/main",
 					"pathName": "pages/order_detail/main",
-					"query": "",
+					"query": "orderNumber=HMDD20191107000000000391",
 					"scene": null
 				},
 				{
@@ -135,6 +135,14 @@
 					"id": -1,
 					"name": "授权",
 					"pathName": "pages/auth/main",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "订单列表",
+					"pathName": "pages/order/main",
+					"query": "",
 					"scene": null
 				}
 			]

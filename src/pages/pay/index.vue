@@ -129,10 +129,11 @@ export default {
         wx.requestPayment({
           ...data.pay,
           success: res => {
-            this.$showToast('成功')
+            // this.$showToast('成功')
+            wx.navigateTo({ url: '/pages/order_result/main' })
           },
           fail: () => {
-            this.$showToast('失败')
+            wx.navigateTo({ url: '/pages/order_result/main?orderNumber=' + orderNumber })
           },
           complete: () => { }
         })

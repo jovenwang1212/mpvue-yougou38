@@ -3,12 +3,12 @@
     <div class="header">
       <div class="portrait-wrapper">
         <div class="portrait">
-          <img src="http://www.sucaijishi.com/uploadfile/2018/0508/20180508023717621.png"
+          <img :src="userInfo.avatarUrl?userInfo.avatarUrl:defaultImgUrl"
                alt="">
         </div>
       </div>
-      <p>登录</p>
-      <p>荞叶</p>
+      <p v-show="!userInfo.nickName" @click="toLogin">登录</p>
+      <p v-show="userInfo.nickName">{{userInfo.nickName}}</p>
     </div>
     <!-- 主要内容部分 -->
     <div class="content">
@@ -33,21 +33,9 @@
       <div class="order-detail">
         <p class="title">我的订单</p>
         <ul>
-          <li>
+          <li v-for="(item, index) in orderMenu" :key="index" @click="toOrder(item.index)">
             <span class="iconfont"></span>
-            <span>待付款</span>
-          </li>
-          <li>
-            <span class="iconfont"></span>
-            <span>待收货</span>
-          </li>
-          <li>
-            <span class="iconfont"></span>
-            <span>退款/退货</span>
-          </li>
-          <li>
-            <span class="iconfont"></span>
-            <span>全部订单</span>
+            <span>{{item.name}}</span>
           </li>
         </ul>
       </div>
@@ -57,7 +45,7 @@
 
       <div class="others">
         <ul>
-          <li>
+          <li @click="makeCall('15361819220')">
             <span>联系客服</span>
             <span class="right">400-618-4000</span>
           </li>
@@ -69,6 +57,51 @@
     </div>
   </div>
 </template>
+
+<script>
+const DEFAULT_IMG_URL = 'http://www.sucaijishi.com/uploadfile/2018/0508/20180508023717621.png'
+
+export default {
+  data () {
+    return {
+      defaultImgUrl: DEFAULT_IMG_URL,
+      userInfo: {},
+      orderMenu: [
+        {
+          name: '待付款',
+          index: 1
+        },
+        {
+          name: '待收货',
+          index: 2
+        },
+        {
+          name: '退款/退货',
+          index: 3
+        },
+        {
+          name: '全部订单',
+          index: 0
+        }
+      ]
+    }
+  },
+  onShow () {
+    this.userInfo = wx.getStorageSync('userInfo')
+  },
+  methods: {
+    toLogin () {
+      wx.navigateTo({ url: '/pages/login/main' })
+    },
+    makeCall (number) {
+      wx.makePhoneCall({ phoneNumber: number })
+    },
+    toOrder (index) {
+      wx.navigateTo({ url: '/pages/order/main?index=' + index })
+    }
+  }
+}
+</script>
 
 
 <style lang="less">

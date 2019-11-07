@@ -2,32 +2,31 @@
   <div class="container">
     <div class="header">
       <ul>
-        <li class="active">全部</li>
-        <li class="active">待付款</li>
-        <li class="active">待收货</li>
-        <li class="active">退款/退货</li>
+        <li v-for="(item, index) in orderMenu"
+            :key="index"
+            :class="{active:activeIndex==index}" @click="changeIndex(index)">{{item}}</li>
       </ul>
     </div>
 
     <div class="content">
       <ul>
-        <li>
-          <div class="goods-info">
-            <img src="https://api.zbztb.cn/full/b0fef388cd035694eac75d7b53e4a1eebf041cf3.jpg"
+        <li v-for="order in orderList" :key="order.order_id">
+          <div class="goods-info" v-for="(item,i) in order.goods" :key="i">
+            <img :src="item.goods_small_logo"
                  alt="">
             <div class="right">
-              <p>asfafaf</p>
+              <p>{{item.goods_name}}</p>
               <div class="price-num">
-                <span class="price">￥1000</span>
-                <span class="num">x10</span>
+                <span class="price">￥{{item.goods_price}}</span>
+                <span class="num">x{{item.goods_number}}</span>
               </div>
             </div>
           </div>
           <p class="total-price">
-            共2件商品 总计：&yen;1000(含运费0.00)
+            共{{order.total_count}}件商品 总计：&yen;{{order.order_price}}(含运费0.00)
           </p>
           <div class="order">
-            <span>订单号:xxx</span>
+            <span>订单号:{{order.order_number}}</span>
             <button type="primary">
               支付
             </button>
@@ -39,6 +38,43 @@
 
   </div>
 </template>
+
+<script>
+export default {
+  data () {
+    return {
+      orderMenu: [
+        '全部',
+        '待付款',
+        '待收货',
+        '退款/退货'
+      ],
+      activeIndex: 0,
+      orderList: []
+    }
+  },
+  onShow () {
+    this.activeIndex = this.$root.$mp.query.index || 0
+    this.queryOrder()
+  },
+  methods: {
+    changeIndex (index) {
+      this.activeIndex = index
+      this.queryOrder()
+    },
+    queryOrder () {
+      this.$request({
+        url: `/api/public/v1/my/orders/all?type=${this.activeIndex + 1}`,
+        isAuth: true
+      }).then(res => {
+        console.log(res)
+        this.orderList = res.orders
+        console.log(this.orderList)
+      })
+    }
+  }
+}
+</script>
 
 <style lang="less">
 .container {

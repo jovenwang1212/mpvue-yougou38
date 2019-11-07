@@ -29,6 +29,7 @@ export default {
           }).then(data => {
             // console.log(data)
             wx.setStorageSync('token', data.token)
+            wx.setStorageSync('userInfo', detail.userInfo)
             wx.navigateBack()
           })
         }
