@@ -66,6 +66,10 @@ export default {
   },
   methods: {
     pay () {
+      if (!this.addr.userName) {
+        this.$showToast('请选择地址哦')
+        return
+      }
       let token = wx.getStorageSync('token')
       if (!token) {
         wx.navigateTo({ url: '/pages/login/main' })
@@ -88,7 +92,40 @@ export default {
 
         }
       }).then(data => {
-        console.log(data)
+        this.doPay(token, data.order_number)
+      }).finally(() => {
+        // 不管创建订单成功还是失败，都应该从购物车里面去掉
+        let cart = wx.getStorageSync('cart')
+        for (let key in cart) {
+          if (cart[key].checked) {
+            delete cart[key]
+          }
+        }
+        wx.setStorageSync('cart', cart)
+      })
+    },
+    doPay (token, orderNumber) {
+      this.$request({
+        url: '/api/public/v1/my/orders/req_unifiedorder',
+        header: {
+          'Authorization': token
+        },
+        method: 'POST',
+        data: {
+          order_number: orderNumber
+        }
+      }).then(data => {
+        // console.log(data)
+        wx.requestPayment({
+          ...data.pay,
+          success: res => {
+            this.$showToast('成功')
+          },
+          fail: () => {
+            this.$showToast('失败')
+          },
+          complete: () => {}
+        })
       })
     },
     filterGoodsList () {
