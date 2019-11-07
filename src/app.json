@@ -11,7 +11,8 @@
     "pages/order/main",
     "pages/order_detail/main",
     "pages/order_result/main",
-    "pages/login/main"
+    "pages/login/main",
+    "pages/auth/main"
   ],
   "window": {
     "backgroundTextStyle": "light",

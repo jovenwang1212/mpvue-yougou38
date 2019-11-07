@@ -130,6 +130,12 @@
 					"pathName": "pages/login/main",
 					"query": "",
 					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "授权",
+					"pathName": "pages/auth/main",
+					"scene": null
 				}
 			]
 		}
