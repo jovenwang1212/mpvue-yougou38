@@ -60,7 +60,7 @@
         <span class="iconfont icon-cart"></span>
         <span>购物车</span>
       </div>
-      <div class="btn add-cart-btn">加入购物车</div>
+      <div class="btn add-cart-btn" @click="add2Cart">加入购物车</div>
       <div class="btn buy-btn">立即购买</div>
     </div>
   </div>
@@ -94,6 +94,29 @@ export default{
     }
   },
   methods: {
+    // 添加购物车
+    add2Cart () {
+      // 取
+      let cart = wx.getStorageSync('cart') || {}
+      // 改
+      let goodsId = this.goodsDetail.goods_id
+      if (cart[goodsId]) {
+        // 后续添加
+        cart[goodsId] = {
+          num: cart[goodsId].num + 1,
+          checked: true
+        }
+        // cart[goodsId].num = cart[goodsId].num + 1
+      } else {
+        // 初次添加
+        cart[goodsId] = {
+          num: 1,
+          checked: true
+        }
+      }
+      // 存回去
+      wx.setStorageSync('cart', cart)
+    },
     toCart () {
       wx.switchTab({ url: '/pages/cart/main' })
     },

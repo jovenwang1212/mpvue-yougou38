@@ -104,8 +104,8 @@
 					"scene": null
 				},
 				{
-					"id": -1,
-					"name": "pages/cart/main",
+					"id": 8,
+					"name": "购物车",
 					"pathName": "pages/cart/main",
 					"query": "",
 					"scene": null
