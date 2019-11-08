@@ -101,16 +101,10 @@ export default {
       }).finally(() => {
         // 如果是从商详的立即购买过来，不需要整理cart
         if (this.goodsId) {
-          return
+
         }
         // 不管创建订单成功还是失败，都应该从购物车里面去掉
-        let cart = wx.getStorageSync('cart')
-        for (let key in cart) {
-          if (cart[key].checked) {
-            delete cart[key]
-          }
-        }
-        wx.setStorageSync('cart', cart)
+        this.$store.commit('removeCart')
       })
     },
     doPay (token, orderNumber) {
@@ -171,7 +165,7 @@ export default {
       if (this.goodsId) {
         ids = this.goodsId
       } else {
-        cart = wx.getStorageSync('cart')
+        cart = this.$store.getters.getCart
         let buyList = this.filterCart(cart)
         ids = Object.keys(buyList).join(',')
       }
@@ -196,7 +190,8 @@ export default {
       })
     },
     // 购物车的数据，如果没有checked，就去掉
-    filterCart (cart) {
+    filterCart (c) {
+      let cart = Object.assign({}, c)
       for (let key in cart) {
         if (!cart[key].checked) {
           delete cart[key]

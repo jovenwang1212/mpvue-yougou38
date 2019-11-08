@@ -8,6 +8,7 @@ Vue.prototype.$request = request
 
 // store设置到原型上
 Vue.prototype.$store = store
+wx.store = store
 
 // 提示框
 Vue.prototype.$showToast = function (title) {

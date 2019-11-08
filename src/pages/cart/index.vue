@@ -46,7 +46,8 @@ export default {
     }
   },
   onShow () {
-    let cart = wx.getStorageSync('cart') || {}
+    // 从内存里面获取cart
+    let cart = this.$store.getters.getCart
     this.getGoodsList(cart)
     // 设置购物车角标
     wx.setTabBarBadge({
@@ -55,15 +56,7 @@ export default {
     })
   },
   onHide () {
-    let cart = {}
-    this.goodsList.forEach(v => {
-      cart[v.goods_id] = {
-        num: v.num,
-        checked: v.checked
-      }
-    })
-    // 存
-    wx.setStorageSync('cart', cart)
+    this.$store.commit('updateCart', this.goodsList)
   },
   computed: {
     // 是否所有的商品都勾选
@@ -123,6 +116,7 @@ export default {
     getGoodsList (cart) {
       let ids = Object.keys(cart).join(',')
       if (!ids.trim()) {
+        this.goodsList = []
         this.$showToast('购物车空的！')
         return
       }
