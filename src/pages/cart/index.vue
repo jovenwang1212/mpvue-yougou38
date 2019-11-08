@@ -48,6 +48,11 @@ export default {
   onShow () {
     let cart = wx.getStorageSync('cart') || {}
     this.getGoodsList(cart)
+    // 设置购物车角标
+    wx.setTabBarBadge({
+      index: 2, // tabBar的哪一项，从左边算起,
+      text: this.badgeNum.toString() // 显示的文本，超过 3 个字符则显示成“…”,
+    })
   },
   onHide () {
     let cart = {}
@@ -74,6 +79,11 @@ export default {
           v.checked = newValue
         })
       }
+    },
+    badgeNum () {
+      return this.goodsList.reduce((sum, item) => {
+        return sum + (item.checked ? 1 : 0)
+      }, 0)
     },
     totalNum () {
       // let sum = 0

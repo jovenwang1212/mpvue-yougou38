@@ -61,7 +61,7 @@
         <span>购物车</span>
       </div>
       <div class="btn add-cart-btn" @click="add2Cart">加入购物车</div>
-      <div class="btn buy-btn">立即购买</div>
+      <div class="btn buy-btn" @click="buy">立即购买</div>
     </div>
   </div>
 </template>
@@ -94,6 +94,10 @@ export default{
     }
   },
   methods: {
+    // 跳转到pay页面，并传递goodsId
+    buy () {
+      wx.navigateTo({ url: '/pages/pay/main?goodsId=' + this.goodsDetail.goods_id })
+    },
     // 添加购物车
     add2Cart () {
       // 取
