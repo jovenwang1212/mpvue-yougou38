@@ -100,29 +100,8 @@ export default{
     },
     // 添加购物车
     add2Cart () {
-      // 取
-      let cart = wx.getStorageSync('cart') || {}
-      // 改
-      let goodsId = this.goodsDetail.goods_id
-      if (cart[goodsId]) {
-        // 后续添加
-        cart[goodsId] = {
-          num: cart[goodsId].num + 1,
-          checked: true
-        }
-        // cart[goodsId].num = cart[goodsId].num + 1
-      } else {
-        // 初次添加
-        cart[goodsId] = {
-          num: 1,
-          checked: true
-        }
-      }
-      wx.showToast({
-        title: '添加购物车成功'
-      })
-      // 存回去
-      wx.setStorageSync('cart', cart)
+      // 改变state.cart
+      this.$store.commit('add2Cart', this.goodsDetail.goods_id)
     },
     toCart () {
       wx.switchTab({ url: '/pages/cart/main' })

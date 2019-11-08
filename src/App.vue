@@ -1,6 +1,9 @@
 <script>
 export default {
-
+  onHide () {
+    console.log('app 切后台了')
+    this.$store.commit('save')
+  }
 }
 </script>
 
