@@ -12,12 +12,23 @@ export default function request (options) {
       })
       // wx.showNavigationBarLoading()
     }
+    let token = ''
+    if (options.isAuth) {
+      token = wx.getStorageSync('token')
+      // 如果没有token，跳转登录、
+      if (!token) {
+        wx.navigateTo({ url: '/pages/login/main' })
+        return
+      }
+    }
 
     wx.request({
       url: `${BASE_URL}${options.url}`,
       data: options.data || {},
       method: options.method,
-      header: options.header,
+      header: {
+        'Authorization': token
+      },
       success: res => {
         const {meta, message} = res.data
         if (meta.status === 200) {

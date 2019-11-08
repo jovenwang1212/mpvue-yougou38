@@ -88,9 +88,7 @@ export default {
     createOrder (token) {
       this.$request({
         url: '/api/public/v1/my/orders/create',
-        header: {
-          'Authorization': token
-        },
+        isAuth: true,
         method: 'POST',
         data: {
           order_price: this.totalPrice,
@@ -118,9 +116,7 @@ export default {
     doPay (token, orderNumber) {
       this.$request({
         url: '/api/public/v1/my/orders/req_unifiedorder',
-        header: {
-          'Authorization': token
-        },
+        isAuth: true,
         method: 'POST',
         data: {
           order_number: orderNumber
