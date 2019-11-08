@@ -29,6 +29,8 @@ export default {
           }).then(data => {
             // console.log(data)
             wx.setStorageSync('token', data.token)
+            // 存储用户信息
+            wx.setStorageSync('userInfo', detail.userInfo)
             wx.navigateBack()
           })
         }

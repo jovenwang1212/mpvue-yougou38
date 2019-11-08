@@ -70,28 +70,28 @@
 				},
 				{
 					"id": 3,
-					"name": "pages/me/main",
+					"name": "我的",
 					"pathName": "pages/me/main",
 					"query": "",
 					"scene": null
 				},
 				{
-					"id": -1,
-					"name": "pages/order/main",
+					"id": 4,
+					"name": "订单列表",
 					"pathName": "pages/order/main",
 					"query": "",
 					"scene": null
 				},
 				{
-					"id": -1,
-					"name": "pages/order_detail/main",
+					"id": 5,
+					"name": "订单详情",
 					"pathName": "pages/order_detail/main",
-					"query": "",
+					"query": "orderNumber=HMDD20191108000000000405",
 					"scene": null
 				},
 				{
-					"id": -1,
-					"name": "pages/order_result/main",
+					"id": 6,
+					"name": "订单结果",
 					"pathName": "pages/order_result/main",
 					"query": "",
 					"scene": null

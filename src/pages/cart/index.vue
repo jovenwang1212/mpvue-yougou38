@@ -104,17 +104,19 @@ export default {
   },
   methods: {
     doAccount () {
+      // 如果商品数量为0，提示
+      if (!this.totalNum) {
+        this.$showToast('请添加商品')
+        return
+      }
+
       // 如果没有token，跳转登陆
       let token = wx.getStorageSync('token')
       if (!token) {
         wx.navigateTo({ url: '/pages/login/main' })
         return
       }
-      // 如果商品数量为0，提示
-      if (!this.totalNum) {
-        this.$showToast('请添加商品')
-        return
-      }
+
       // 跳转pay
       wx.navigateTo({ url: '/pages/pay/main' })
     },

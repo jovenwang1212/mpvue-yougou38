@@ -2,33 +2,30 @@
   <div class="container">
     <div class="header">
       <ul>
-        <li class="active">全部</li>
-        <li class="active">待付款</li>
-        <li class="active">待收货</li>
-        <li class="active">退款/退货</li>
+        <li :class="{active:activeIndex===index}" v-for="(item,index) in tabList" :key="item" @click="changeTab(index)">{{item}}</li>
       </ul>
     </div>
 
     <div class="content">
       <ul>
-        <li>
-          <div class="goods-info">
-            <img src="https://api.zbztb.cn/full/b0fef388cd035694eac75d7b53e4a1eebf041cf3.jpg"
+        <li v-for="order in orderList" :key="order.order_id">
+          <div class="goods-info" v-for="(item, i) in order.goods" :key="item.goods_id">
+            <img :src="item.goods_small_logo"
                  alt="">
             <div class="right">
-              <p>asfafaf</p>
+              <p>{{item.goods_name}}</p>
               <div class="price-num">
-                <span class="price">￥1000</span>
-                <span class="num">x10</span>
+                <span class="price">￥{{item.goods_price}}</span>
+                <span class="num">x{{item.goods_number}}</span>
               </div>
             </div>
           </div>
           <p class="total-price">
-            共2件商品 总计：&yen;1000(含运费0.00)
+            共{{order.total_count}}件商品 总计：&yen;{{order.total_price}}(含运费0.00)
           </p>
           <div class="order">
-            <span>订单号:xxx</span>
-            <button type="primary">
+            <span>订单号:{{order.order_number}}</span>
+            <button type="primary" v-show="order.pay_status==0">
               支付
             </button>
           </div>
@@ -39,6 +36,44 @@
 
   </div>
 </template>
+
+<script>
+export default {
+  data () {
+    return {
+      activeIndex: 0,
+      tabList: [
+        '全部',
+        '待付款',
+        '待收货',
+        '退款/退货'
+      ],
+      orderList: []
+    }
+  },
+  onLoad (options) {
+    this.activeIndex = parseInt(options.activeIndex)
+    this.queryOrderList()
+    // 需要重置吗？no
+  },
+  methods: {
+    queryOrderList () {
+      this.$request({
+        url: `/api/public/v1/my/orders/all?type=${this.activeIndex + 1}`,
+        isAuth: true
+      }).then(data => {
+        console.log(data)
+        this.orderList = data.orders
+      })
+    },
+    changeTab (index) {
+      // 样式
+      this.activeIndex = index
+      this.queryOrderList()
+    }
+  }
+}
+</script>
 
 <style lang="less">
 .container {
